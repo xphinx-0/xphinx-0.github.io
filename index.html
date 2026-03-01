@@ -2,138 +2,358 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xphinx-0 | Links</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Instrument+Sans:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>XPHINX</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Light Mode Variables */
-            --bg: #ffffff;
-            --text: #1a1a1a;
-            --card-bg: #f5f5f7;
-            --card-border: #e5e5e7;
-            --accent: #007aff;
-            --transition: 0.3s ease;
+            --bg: #F8F9FF;
+            --surface: #F8F9FF;
+            --on-surface: #191C20;
+            --primary: #0061A4;
+            --on-primary: #FFFFFF;
+            --outline: #72777F;
+            --surface-variant: #DFE2EB;
+            --on-surface-variant: #43474E;
+            --transition: 0.4s cubic-bezier(0.2, 0, 0, 1);
         }
 
         [data-theme="dark"] {
-            /* Dark Mode Variables */
-            --bg: #0d1117;
-            --text: #f0f6fc;
-            --card-bg: #161b22;
-            --card-border: #30363d;
-            --accent: #58a6ff;
+            --bg: #111318;
+            --surface: #111318;
+            --on-surface: #E2E2E9;
+            --primary: #9ECAFF;
+            --on-primary: #003258;
+            --outline: #8C9199;
+            --surface-variant: #2A2D35;
+            --on-surface-variant: #C3C7CF;
         }
 
         body {
             background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            transition: background-color var(--transition), color var(--transition);
+            color: var(--on-surface);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 40px 20px;
-            margin: 0;
+            justify-content: center; /* Vertically center content */
             min-height: 100vh;
+            transition: background-color 0.3s ease;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Theme Toggle Button */
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text);
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .profile-pic {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid var(--accent);
-            margin-bottom: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            font-family: 'Instrument Sans', sans-serif;
-            font-size: 1.5rem;
-            margin: 0 0 5px 0;
-        }
-
-        p.bio {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-bottom: 30px;
-        }
-
-        .links-container {
+        /* Top Bar */
+        .top-app-bar {
             width: 100%;
-            max-width: 450px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover { background: var(--surface-variant); }
+        .menu-btn svg { fill: var(--on-surface); }
+
+        /* Smooth Drawer */
+        .drawer {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: var(--surface);
+            z-index: 100;
+            transform: translateX(-110%);
+            transition: transform var(--transition);
+            padding: 24px 16px;
+            box-sizing: border-box;
+            border-radius: 0 16px 16px 0;
+            will-change: transform;
+        }
+
+        .drawer.active {
+            transform: translateX(0);
+            box-shadow: 10px 0 40px rgba(0,0,0,0.3);
+        }
+
+        .drawer-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            padding-left: 12px;
+            letter-spacing: 0.2em;
+            color: var(--primary);
+            opacity: 0.8;
+        }
+
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-radius: 28px;
+            background: var(--surface-variant);
+        }
+
+        /* MD3 Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 32px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--surface-variant);
+            border: 2px solid var(--outline);
+            transition: .3s;
+            border-radius: 32px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 6px; bottom: 6px;
+            background-color: var(--outline);
+            transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--primary); border-color: var(--primary); }
+        input:checked + .slider:before { 
+            transform: translateX(18px); 
+            background-color: var(--on-primary);
+            height: 24px; width: 24px; left: 4px; bottom: 2px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            z-index: 90;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.active { display: block; opacity: 1; }
+
+        /* Main Wrapper to handle centering */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 20px 0;
+        }
+
+        .header { text-align: center; }
+
+        .name-title {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: clamp(3.2rem, 12vw, 5.5rem);
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            margin: 0;
+            color: var(--on-surface);
+            line-height: 1;
+        }
+
+        .bio-text {
+            font-size: 0.75rem;
+            margin-top: 10px;
+            opacity: 0.5;
+            letter-spacing: 0.15em;
+        }
+
+        /* Links Grid */
+        .links-grid {
+            width: 85%;
+            max-width: 440px;
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
         .link-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            text-align: center;
             text-decoration: none;
-            color: var(--text);
-            font-weight: 600;
-            display: block;
-            transition: all var(--transition);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
         }
 
-        .link-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--accent);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            background: var(--card-border);
+        .style-brutalist {
+            border: 2px solid var(--on-surface);
+            padding: 18px 24px;
+            color: var(--on-surface);
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        .style-brutalist:active { background: var(--on-surface); color: var(--bg); }
+
+        .style-md3 {
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .style-md3:active { opacity: 0.8; transform: scale(0.98); }
+
+        .style-quote {
+            background: var(--surface-variant);
+            padding: 18px;
+            border-radius: 8px;
+            color: var(--on-surface-variant);
+            font-size: 0.8rem;
+            border-left: 6px solid var(--primary);
+            position: relative;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            background: var(--on-surface);
+            color: var(--bg);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transform: translateY(100px);
+            transition: transform 0.3s var(--transition);
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .toast.show { transform: translateY(0); }
+
     </style>
 </head>
 <body>
 
-    <button class="theme-toggle" id="toggle">🌓 Switch Theme</button>
-
-    <img src="https://github.com/xphinx-0.png" alt="Profile" class="profile-pic">
-    
-    <h1>xphinx-0</h1>
-    <p class="bio">Developer & Creator</p>
-
-    <div class="links-container">
-        <a href="#" class="link-card">Portfolio</a>
-        <a href="#" class="link-card">Latest Project</a>
-        <a href="#" class="link-card">Instagram</a>
-        <a href="#" class="link-card">YouTube</a>
+    <div class="top-app-bar">
+        <button class="menu-btn" id="menuToggle" aria-label="Open settings">
+            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
     </div>
 
+    <div class="overlay" id="overlay"></div>
+
+    <nav class="drawer" id="drawer">
+        <div class="drawer-header">/PREFERENCES</div>
+        <div class="drawer-item">
+            <span>DARK_MODE</span>
+            <label class="switch">
+                <input type="checkbox" id="themeSwitch" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </nav>
+
+    <!-- Main Content wrapper for vertical centering -->
+    <main class="main-content">
+        <div class="header">
+            <h1 class="name-title">Xphinx</h1>
+            <p class="bio-text">ROOT@DEV:~$ ONLINE</p>
+        </div>
+
+        <div class="links-grid">
+            <!-- GitHub with Arrow -->
+            <a href="https://github.com/xphinx-0/xphinx-0.github.io/" class="link-card style-brutalist">
+                GITHUB_SOURCE <span>→</span>
+            </a>
+            
+            <div class="link-card style-quote" id="copyBtn" data-copy="npx xphinx-profile --run">
+                > npx xphinx-profile --run
+            </div>
+
+            <a href="#" class="link-card style-md3">
+                LATEST_PROJECTS
+            </a>
+
+            <!-- Portfolio with [01] -->
+            <a href="#" class="link-card style-brutalist">
+                VIEW_PORTFOLIO <span>[01]</span>
+            </a>
+        </div>
+    </main>
+
+    <div id="toast" class="toast">COPIED TO CLIPBOARD</div>
+
     <script>
-        const btn = document.getElementById('toggle');
+        const menuBtn = document.getElementById('menuToggle');
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('overlay');
+        const themeSwitch = document.getElementById('themeSwitch');
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
         const html = document.documentElement;
 
-        // Check for saved user preference
-        const savedTheme = localStorage.getItem('theme') || 
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        
-        html.setAttribute('data-theme', savedTheme);
+        const toggleDrawer = (state) => {
+            if(state === 'open') {
+                overlay.classList.add('active');
+                drawer.classList.add('active');
+            } else {
+                overlay.classList.remove('active');
+                drawer.classList.remove('active');
+            }
+        };
 
-        btn.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+        menuBtn.addEventListener('click', () => toggleDrawer('open'));
+        overlay.addEventListener('click', () => toggleDrawer('close'));
+
+        themeSwitch.addEventListener('change', () => {
+            const theme = themeSwitch.checked ? 'dark' : 'light';
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('xp-theme', theme);
         });
+
+        copyBtn.addEventListener('click', () => {
+            const text = copyBtn.getAttribute('data-copy');
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1500);
+        });
+
+        const savedTheme = localStorage.getItem('xp-theme');
+        if (savedTheme) {
+            themeSwitch.checked = (savedTheme === 'dark');
+            html.setAttribute('data-theme', savedTheme);
+        }
     </script>
 </body>
 </html>
